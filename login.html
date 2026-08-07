@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Employee Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-logo">EM</div>
+          <h1>Welcome Back</h1>
+          <p>Sign in to your Employee Management account</p>
+        </div>
+
+        <div class="login-error" id="loginError" role="alert"></div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="you@company.com" autocomplete="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
+          </div>
+
+          <div class="login-footer">
+            <div class="checkbox-group">
+              <input type="checkbox" id="rememberMe" name="rememberMe">
+              <label for="rememberMe">Remember Me</label>
+            </div>
+            <a href="#" class="forgot-link" id="forgotPassword">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+            Sign In
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      redirectIfAuthenticated();
+
+      const form = document.getElementById('loginForm');
+      const loginError = document.getElementById('loginError');
+      const loginBtn = document.getElementById('loginBtn');
+
+      document.getElementById('forgotPassword').addEventListener('click', (e) => {
+        e.preventDefault();
+        showNotification('Info', 'Password reset feature coming soon.', 'warning');
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearFormErrors(form);
+        loginError.classList.remove('show');
+        loginError.textContent = '';
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const remember = document.getElementById('rememberMe').checked;
+
+        let hasError = false;
+
+        const emailError = validateRequired(email, 'Email');
+        if (emailError) {
+          setFieldError(document.getElementById('email'), emailError);
+          hasError = true;
+        } else if (!validateEmail(email)) {
+          setFieldError(document.getElementById('email'), 'Please enter a valid email address.');
+          hasError = true;
+        }
+
+        const passwordError = validateRequired(password, 'Password');
+        if (passwordError) {
+          setFieldError(document.getElementById('password'), passwordError);
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<span class="spinner spinner-sm"></span> Signing in...';
+        showLoading();
+
+        try {
+          const response = await login(email, password);
+          const token = response.token || response.access_token || response.data?.token;
+          const user = response.user || response.data?.user || { email, full_name: response.full_name || email.split('@')[0] };
+
+          if (!token) throw new Error('Invalid response from server.');
+
+          setToken(token, remember);
+          setStoredUser(user, remember);
+
+          showNotification('Success', 'Login successful! Redirecting...', 'success');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+        } catch (error) {
+          loginError.textContent = error.message || 'Login failed. Please try again.';
+          loginError.classList.add('show');
+        } finally {
+          hideLoading();
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Sign In';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

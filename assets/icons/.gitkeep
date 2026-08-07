@@ -1,0 +1,5 @@
+# Icons Directory
+
+Place custom SVG icons or icon assets here.
+
+The application currently uses inline SVG icons defined in `js/auth.js`.
