@@ -2,7 +2,7 @@
  * API Module - All REST API requests for Employee Management System
  */
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const TOKEN_KEY = 'ems_token';
 const USER_KEY = 'ems_user';
@@ -146,7 +146,7 @@ async function logout() {
 }
 
 async function getCurrentUserProfile() {
-  return apiRequest('/auth/me');
+  return apiRequest('/user/profile');
 }
 
 async function changePassword(currentPassword, newPassword) {

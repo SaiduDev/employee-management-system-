@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const pageContent = document.getElementById('pageContent');
   const user = getCurrentUser();
-  const name = user?.full_name || user?.name || 'User';
+  const name = user?.fullname || user?.name || 'User';
 
   pageContent.innerHTML = `
     <div class="profile-header">
@@ -103,7 +103,7 @@ async function loadProfile() {
     const response = await getCurrentUserProfile();
     const profile = response.data || response;
 
-    document.getElementById('profileFullName').value = profile.full_name || profile.name || '';
+    document.getElementById('profileFullName').value = profile.fullname || profile.name || '';
     document.getElementById('profileEmail').value = profile.email || '';
     document.getElementById('profilePhone').value = profile.phone || profile.phone_number || '';
 

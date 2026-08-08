@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const pageContent = document.getElementById('pageContent');
   const user = getCurrentUser();
-  const userName = user?.full_name || user?.name || 'User';
+  const userName = user?.fullname || user?.name || 'User';
   const greeting = getGreeting();
 
   pageContent.innerHTML = `
