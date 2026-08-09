@@ -151,7 +151,7 @@ async function getCurrentUserProfile() {
 
 async function changePassword(currentPassword, newPassword) {
   return apiRequest('/auth/change-password', {
-    method: 'POST',
+    method: 'PUT',
     body: { current_password: currentPassword, new_password: newPassword },
   });
 }
@@ -277,7 +277,7 @@ async function deleteLeave(id) {
    ============================================ */
 
 async function updateProfile(data) {
-  return apiRequest('/profile', {
+  return apiRequest('/profile/update', {
     method: 'PUT',
     body: data,
   });

@@ -127,13 +127,13 @@ async function handleSaveProfile(e) {
   const form = document.getElementById('profileForm');
   clearFormErrors(form);
 
-  const fullName = document.getElementById('profileFullName').value.trim();
+  const fullname = document.getElementById('profileFullName').value.trim();
   const email = document.getElementById('profileEmail').value.trim();
   const phone = document.getElementById('profilePhone').value.trim();
 
   let hasError = false;
 
-  const nameError = validateRequired(fullName, 'Full name');
+  const nameError = validateRequired(fullname, 'Full name');
   if (nameError) { setFieldError(document.getElementById('profileFullName'), nameError); hasError = true; }
 
   const emailError = validateRequired(email, 'Email');
@@ -150,7 +150,7 @@ async function handleSaveProfile(e) {
   showLoading();
 
   try {
-    const response = await updateProfile({ full_name: fullName, email, phone });
+    const response = await updateProfile({ fullname: fullname, email, phone });
     const updated = response.data || response;
     const remember = isRemembered();
     setStoredUser(updated, remember);
