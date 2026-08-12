@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
       <div class="toolbar-actions">
         <button class="btn btn-primary" id="addDepartmentBtn">
-          ${ICONS.plus} Add Department
+          Add Department
         </button>
       </div>
     </div>
@@ -105,8 +105,8 @@ function renderDepartments() {
       <td>${escapeHtml(dept.description || '-')}</td>
       <td>
         <div class="table-actions">
-          <button class="btn btn-sm btn-secondary btn-edit" data-id="${dept.id}" title="Edit">${ICONS.edit}</button>
-          <button class="btn btn-sm btn-danger btn-delete" data-id="${dept.id}" data-name="${escapeHtml(dept.name)}" title="Delete">${ICONS.trash}</button>
+          <button class="btn btn-sm btn-secondary btn-edit" data-id="${dept.id}" title="Edit">Edit</button>
+          <button class="btn btn-sm btn-danger btn-delete" data-id="${dept.id}" data-name="${escapeHtml(dept.name)}" title="Delete">Delete</button>
         </div>
       </td>
     </tr>`

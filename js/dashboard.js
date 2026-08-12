@@ -40,19 +40,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="card-body">
           <div class="quick-actions">
             <a href="employees.html" class="quick-action-btn">
-              ${ICONS.plus}
               Add Employee
             </a>
             <a href="departments.html" class="quick-action-btn">
-              ${ICONS.departments}
               Add Department
             </a>
             <a href="leave.html" class="quick-action-btn">
-              ${ICONS.leave}
               Apply Leave
             </a>
             <a href="profile.html" class="quick-action-btn">
-              ${ICONS.profile}
               My Profile
             </a>
           </div>

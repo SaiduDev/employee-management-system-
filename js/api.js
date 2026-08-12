@@ -128,6 +128,11 @@ async function apiRequest(endpoint, options = {}) {
    Authentication Endpoints
    ============================================ */
 
+/**
+ * Endpoint: POST /auth/login
+ * Description: Authenticates a user and returns a session token.
+ * Expected payload: { email, password }
+ */
 async function login(email, password) {
   return apiRequest('/auth/login', {
     method: 'POST',
@@ -135,6 +140,11 @@ async function login(email, password) {
   });
 }
 
+/**
+ * Endpoint: POST /auth/logout
+ * Description: Ends the current user session on the server.
+ * Expected payload/data: No body required; uses the current auth token from storage.
+ */
 async function logout() {
   try {
     await apiRequest('/auth/logout', { method: 'POST' });
@@ -145,10 +155,20 @@ async function logout() {
   clearStoredUser();
 }
 
+/**
+ * Endpoint: GET /user/profile
+ * Description: Retrieves the authenticated user's profile information.
+ * Expected payload/data: No body required.
+ */
 async function getCurrentUserProfile() {
   return apiRequest('/user/profile');
 }
 
+/**
+ * Endpoint: PUT /auth/change-password
+ * Description: Changes the authenticated user's password.
+ * Expected payload: { current_password, new_password }
+ */
 async function changePassword(currentPassword, newPassword) {
   return apiRequest('/auth/change-password', {
     method: 'PUT',
@@ -160,10 +180,20 @@ async function changePassword(currentPassword, newPassword) {
    Dashboard Endpoints
    ============================================ */
 
+/**
+ * Endpoint: GET /dashboard/stats
+ * Description: Retrieves dashboard summary statistics.
+ * Expected payload/data: No body required.
+ */
 async function getDashboardStats() {
   return apiRequest('/dashboard/stats');
 }
 
+/**
+ * Endpoint: GET /dashboard/recent-employees
+ * Description: Fetches a list of recently added or updated employees for the dashboard.
+ * Expected payload/data: No body required.
+ */
 async function getRecentEmployees() {
   return apiRequest('/dashboard/recent-employees');
 }
@@ -172,31 +202,56 @@ async function getRecentEmployees() {
    Employee Endpoints
    ============================================ */
 
+/**
+ * Endpoint: GET /employees
+ * Description: Retrieves a paginated or filtered list of employees.
+ * Expected payload/data: Query parameters object such as { page, limit, search, departmentId }.
+ */
 async function getEmployees(params = {}) {
   const query = new URLSearchParams(params).toString();
-  return apiRequest(`/employees${query ? `?${query}` : ''}`);
+  return apiRequest(`/employees`);
 }
 
+/**
+ * Endpoint: GET /employees/:id
+ * Description: Retrieves a single employee by ID.
+ * Expected payload/data: No body required; pass the employee ID in the URL.
+ */
 async function getEmployee(id) {
-  return apiRequest(`/employees/${id}`);
+  return apiRequest(`/getEmployeeById/${id}`);
 }
 
+/**
+ * Endpoint: POST /employees
+ * Description: Creates a new employee record.
+ * Expected payload: Employee data object containing the required employee fields.
+ */
 async function createEmployee(data) {
-  return apiRequest('/employees', {
+  return apiRequest('/new/employee', {
     method: 'POST',
     body: data,
   });
 }
 
+/**
+ * Endpoint: PUT /employees/:id
+ * Description: Updates an existing employee record.
+ * Expected payload: Employee update object with the fields to change.
+ */
 async function updateEmployee(id, data) {
-  return apiRequest(`/employees/${id}`, {
+  return apiRequest(`/update/employee/${id}`, {
     method: 'PUT',
     body: data,
   });
 }
 
+/**
+ * Endpoint: DELETE /employees/:id
+ * Description: Deletes an employee record by ID.
+ * Expected payload/data: No body required; pass the employee ID in the URL.
+ */
 async function deleteEmployee(id) {
-  return apiRequest(`/employees/${id}`, {
+  return apiRequest(`/remove/employee/${id}`, {
     method: 'DELETE',
   });
 }
@@ -205,31 +260,56 @@ async function deleteEmployee(id) {
    Department Endpoints
    ============================================ */
 
+/**
+ * Endpoint: GET /departments
+ * Description: Retrieves a list of departments.
+ * Expected payload/data: Query parameters object such as { page, limit, search }.
+ */
 async function getDepartments(params = {}) {
   const query = new URLSearchParams(params).toString();
-  return apiRequest(`/departments${query ? `?${query}` : ''}`);
+  return apiRequest(`/all/departments`);
 }
 
+/**
+ * Endpoint: GET /departments/:id
+ * Description: Retrieves a single department by ID.
+ * Expected payload/data: No body required; pass the department ID in the URL.
+ */
 async function getDepartment(id) {
   return apiRequest(`/departments/${id}`);
 }
 
+/**
+ * Endpoint: POST /departments
+ * Description: Creates a new department.
+ * Expected payload: Department data object containing the required department fields.
+ */
 async function createDepartment(data) {
-  return apiRequest('/departments', {
+  return apiRequest('/new/departments', {
     method: 'POST',
     body: data,
   });
 }
 
+/**
+ * Endpoint: PUT /departments/:id
+ * Description: Updates an existing department.
+ * Expected payload: Department update object with the fields to change.
+ */
 async function updateDepartment(id, data) {
-  return apiRequest(`/departments/${id}`, {
+  return apiRequest(`/update/departments/${id}`, {
     method: 'PUT',
     body: data,
   });
 }
 
+/**
+ * Endpoint: DELETE /departments/:id
+ * Description: Deletes a department by ID.
+ * Expected payload/data: No body required; pass the department ID in the URL.
+ */
 async function deleteDepartment(id) {
-  return apiRequest(`/departments/${id}`, {
+  return apiRequest(`/delete/departments/${id}`, {
     method: 'DELETE',
   });
 }
@@ -238,36 +318,66 @@ async function deleteDepartment(id) {
    Leave Management Endpoints
    ============================================ */
 
+/**
+ * Endpoint: GET /leave
+ * Description: Retrieves leave requests.
+ * Expected payload/data: Query parameters object such as { page, limit, status }.
+ */
 async function getLeaveRequests(params = {}) {
   const query = new URLSearchParams(params).toString();
-  return apiRequest(`/leave${query ? `?${query}` : ''}`);
+  return apiRequest(`/getAllLeaves`);
 }
 
+/**
+ * Endpoint: GET /leave/:id
+ * Description: Retrieves a specific leave request by ID.
+ * Expected payload/data: No body required; pass the leave ID in the URL.
+ */
 async function getLeaveRequest(id) {
   return apiRequest(`/leave/${id}`);
 }
 
+/**
+ * Endpoint: POST /leave
+ * Description: Submits a new leave request.
+ * Expected payload: Leave request data object containing the leave details.
+ */
 async function applyLeave(data) {
-  return apiRequest('/leave', {
+  return apiRequest('/submit/leave', {
     method: 'POST',
     body: data,
   });
 }
 
+/**
+ * Endpoint: PUT /leave/:id/approve
+ * Description: Approves a leave request.
+ * Expected payload/data: No body required; pass the leave ID in the URL.
+ */
 async function approveLeave(id) {
   return apiRequest(`/leave/${id}/approve`, {
     method: 'PUT',
   });
 }
 
+/**
+ * Endpoint: PUT /leave/:id/reject
+ * Description: Rejects a leave request.
+ * Expected payload/data: No body required; pass the leave ID in the URL.
+ */
 async function rejectLeave(id) {
   return apiRequest(`/leave/${id}/reject`, {
     method: 'PUT',
   });
 }
 
+/**
+ * Endpoint: DELETE /leave/:id
+ * Description: Deletes a leave request by ID.
+ * Expected payload/data: No body required; pass the leave ID in the URL.
+ */
 async function deleteLeave(id) {
-  return apiRequest(`/leave/${id}`, {
+  return apiRequest(`/leave/delete/${id}`, {
     method: 'DELETE',
   });
 }
@@ -276,6 +386,11 @@ async function deleteLeave(id) {
    Profile Endpoints
    ============================================ */
 
+/**
+ * Endpoint: PUT /profile/update
+ * Description: Updates the authenticated user's profile information.
+ * Expected payload: Profile update object with the fields to change.
+ */
 async function updateProfile(data) {
   return apiRequest('/profile/update', {
     method: 'PUT',

@@ -10,6 +10,7 @@ let deleteTargetId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!initLayout('employees', 'Employees')) return;
+  document.body.classList.add('page-employees');
 
   const pageContent = document.getElementById('pageContent');
   pageContent.innerHTML = `
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
       <div class="toolbar-actions">
         <button class="btn btn-primary" id="addEmployeeBtn">
-          ${ICONS.plus} Add Employee
+          Add Employee
         </button>
       </div>
     </div>
@@ -35,11 +36,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         <table>
           <thead>
             <tr>
-              <th>Full Name</th>
+              <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
-              <th>Department</th>
-              <th>Position</th>
+              <th>Dep</th>
+              <th>Pos</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -119,7 +120,7 @@ function getFilteredEmployees() {
     (emp) =>
       (emp.full_name || emp.name || '').toLowerCase().includes(query) ||
       (emp.email || '').toLowerCase().includes(query) ||
-      (emp.department_name || emp.department || '').toLowerCase().includes(query) ||
+      (emp.department_id || emp.department || '').toLowerCase().includes(query) ||
       (emp.position || '').toLowerCase().includes(query)
   );
 }
@@ -150,14 +151,14 @@ function renderEmployees() {
       <td>${escapeHtml(emp.full_name || emp.name || '-')}</td>
       <td>${escapeHtml(emp.email || '-')}</td>
       <td>${escapeHtml(emp.phone || '-')}</td>
-      <td>${escapeHtml(emp.department_name || emp.department || '-')}</td>
+      <td>${escapeHtml(emp.department_id || emp.department || '-')}</td>
       <td>${escapeHtml(emp.position || '-')}</td>
       <td>${getStatusBadge(emp.employment_status || emp.status)}</td>
       <td>
         <div class="table-actions">
-          <button class="btn btn-sm btn-secondary btn-view" data-id="${emp.id}" title="View">${ICONS.eye}</button>
-          <button class="btn btn-sm btn-secondary btn-edit" data-id="${emp.id}" title="Edit">${ICONS.edit}</button>
-          <button class="btn btn-sm btn-danger btn-delete" data-id="${emp.id}" data-name="${escapeHtml(emp.full_name || emp.name)}" title="Delete">${ICONS.trash}</button>
+          <button class="btn btn-sm btn-secondary btn-view" data-id="${emp.id}" title="View">${'view'}</button>
+          <button class="btn btn-sm btn-secondary btn-edit" data-id="${emp.id}" title="Edit">${'edit'}</button>
+          <button class="btn btn-sm btn-danger btn-delete" data-id="${emp.id}" data-name="${escapeHtml(emp.full_name || emp.name)}" title="Delete">${'delete'}</button>
         </div>
       </td>
     </tr>`
@@ -226,7 +227,7 @@ async function viewEmployee(id) {
         <div class="detail-item"><label>Full Name</label><span>${escapeHtml(emp.full_name || emp.name || '-')}</span></div>
         <div class="detail-item"><label>Email</label><span>${escapeHtml(emp.email || '-')}</span></div>
         <div class="detail-item"><label>Phone</label><span>${escapeHtml(emp.phone || '-')}</span></div>
-        <div class="detail-item"><label>Department</label><span>${escapeHtml(emp.department_name || emp.department || '-')}</span></div>
+        <div class="detail-item"><label>Department</label><span>${escapeHtml(emp.department_id || emp.department || '-')}</span></div>
         <div class="detail-item"><label>Position</label><span>${escapeHtml(emp.position || '-')}</span></div>
         <div class="detail-item"><label>Status</label><span>${getStatusBadge(emp.employment_status || emp.status)}</span></div>
       </div>`;

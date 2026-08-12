@@ -3,6 +3,7 @@
  */
 
 let allLeaveRequests = [];
+let allEmployees = [];
 let currentFilter = 'all';
 let currentPage = 1;
 const perPage = 10;
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
       <div class="toolbar-actions">
         <button class="btn btn-primary" id="applyLeaveBtn">
-          ${ICONS.plus} Apply for Leave
+          Apply for Leave
         </button>
       </div>
     </div>
@@ -72,14 +73,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderLeaveRequests();
   });
 
+  await loadEmployees();
   await loadLeaveRequests();
 });
+
+async function loadEmployees() {
+  try {
+    const response = await getEmployees();
+    allEmployees = response.data || response || [];
+    const employeeSelect = document.getElementById('leaveEmployee');
+    employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+
+    if (!allEmployees.length) {
+      employeeSelect.innerHTML += '<option value="" disabled>No employees available</option>';
+      return;
+    }
+
+    allEmployees.forEach((employee) => {
+      const employeeName = escapeHtml(employee.full_name || employee.name || `${employee.first_name || ''} ${employee.last_name || ''}`.trim() || 'Unnamed');
+      employeeSelect.innerHTML += `<option value="${escapeHtml(employee.id)}">${employeeName}</option>`;
+    });
+  } catch (error) {
+    showNotification('Warning', 'Unable to load employee list. Leave requests can still be submitted with a name.', 'warning');
+  }
+}
 
 async function loadLeaveRequests() {
   showLoading();
   try {
     const response = await getLeaveRequests();
-    allLeaveRequests = response.data || response || [];
+
+    // Normalize different possible API response shapes into an array
+    function normalizeResponseToArray(resp) {
+      if (!resp) return [];
+      if (Array.isArray(resp)) return resp;
+      if (Array.isArray(resp.data)) return resp.data;
+      if (Array.isArray(resp.items)) return resp.items;
+      if (Array.isArray(resp.leaves)) return resp.leaves;
+
+      // If response is an object, try to find the first array-valued property
+      if (typeof resp === 'object') {
+        for (const k of Object.keys(resp)) {
+          if (Array.isArray(resp[k])) return resp[k];
+        }
+      }
+
+      // Fallback: not an array
+      console.warn('Unexpected shape for leave requests response, expected array-like but got:', resp);
+      return [];
+    }
+
+    allLeaveRequests = normalizeResponseToArray(response);
     renderLeaveRequests();
   } catch (error) {
     allLeaveRequests = [];
@@ -128,8 +172,8 @@ function renderLeaveRequests() {
       const actions =
         status === 'pending'
           ? `
-          <button class="btn btn-sm btn-success btn-approve" data-id="${req.id}" title="Approve">${ICONS.check}</button>
-          <button class="btn btn-sm btn-danger btn-reject" data-id="${req.id}" title="Reject">${ICONS.x}</button>`
+          <button class="btn btn-sm btn-success btn-approve" data-id="${req.id}" title="Approve">✅</button>
+          <button class="btn btn-sm btn-danger btn-reject" data-id="${req.id}" title="Reject">❌</button>`
           : '<span class="text-muted">—</span>';
 
       return `
@@ -162,12 +206,19 @@ async function handleApplyLeave(e) {
   const form = document.getElementById('applyLeaveForm');
   clearFormErrors(form);
 
+  const employeeId = document.getElementById('leaveEmployee').value;
+  const employeeName = document.getElementById('leaveEmployee').selectedOptions[0]?.text.trim() || '';
   const leaveType = document.getElementById('leaveType').value;
   const startDate = document.getElementById('leaveStartDate').value;
   const endDate = document.getElementById('leaveEndDate').value;
   const reason = document.getElementById('leaveReason').value.trim();
 
   let hasError = false;
+
+  if (!employeeId) {
+    setFieldError(document.getElementById('leaveEmployee'), 'Employee is required.');
+    hasError = true;
+  }
 
   if (!leaveType) {
     setFieldError(document.getElementById('leaveType'), 'Leave type is required.');
@@ -197,6 +248,8 @@ async function handleApplyLeave(e) {
 
   try {
     await applyLeave({
+      employee_id: employeeId,
+      employee_name: employeeName,
       leave_type: leaveType,
       start_date: startDate,
       end_date: endDate,

@@ -1,11 +1,12 @@
 /* ============================================
    Employee Management System - Base Styles
    ============================================ */
+   
 
 :root {
   --primary: #4f46e5;
   --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
+  --primary-light: #eef2ff; 
   --secondary: #6366f1;
   --success: #10b981;
   --success-light: #d1fae5;
